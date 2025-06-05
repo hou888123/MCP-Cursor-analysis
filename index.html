@@ -13,22 +13,13 @@
   </body>
 </html>
 <script>
-  const MAX_KEYBOARD_PROPORTION = .52
-const preventScrollWhenSoftKeyboardAppearsIfThereIsPlentyOfRoom = (e) => {
-  // Bail if not iOS
-  if (!/iPad|iPhone|iPod/.test(navigator.userAgent)) return
-  // Bail if there's too little vertical space and scrolling is necessary
-  if ((e.target.offsetTop + e.target.offsetHeight) / window.innerHeight > MAX_KEYBOARD_PROPORTION) return
+  // To wrappers where user would attempt drag/touchmove/scroll
+  document.body.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+});
 
-  // Fix the position of the body momentarily to prevent user agent scrolling
-  var offset = document.body.scrollTop;
-  document.body.style.top = (offset * -1) + 'px';
-  document.body.classList.add('prevent-ios-focus-scrolling');
-  setTimeout(() => {
-    // Undo it after 500ms, roughly the amount of time focus animation takes iOS
-    offset = parseInt(document.body.style.top, 10);
-    document.body.classList.remove('prevent-ios-focus-scrolling');
-    document.body.scrollTop = (offset * -1);
-  }, 500)
-}
+// To element where I would like to avoid this behaviour
+document.body.addEventListener('touchmove', (e) => {
+    e.stopPropogation();
+});
 </script>
