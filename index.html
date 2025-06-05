@@ -5,21 +5,70 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>Vite + React</title>
-    <script type="module" crossorigin src="./assets/index-CQo1yjN4.js"></script>
+    <script type="module" crossorigin src="./assets/index-B5-ZPSxG.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-CS8f0UJf.css">
   </head>
   <body>
-    <div id="root" class="relative"></div>
+    <div id="root" class="relative fullscreen-container"></div>
   </body>
 </html>
+<style>
+.fullscreen-container {
+  height: calc(var(--vh, 1vh) * 100);
+}
+.fixed-footer {
+  position: absolute;
+  bottom: 0;
+}
+
+body.keyboard-open .fixed-footer {
+  position: fixed;
+  bottom: 0;
+}
+</style>
+
 <script>
-  // To wrappers where user would attempt drag/touchmove/scroll
-  document.body.addEventListener('touchmove', (e) => {
-    e.preventDefault();
+  // 在鍵盤開啟時避免 body scroll 跳動
+function preventScrollOnKeyboardOpen() {
+  const scrollY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollY}px`;
+  document.body.style.width = '100%';
+  return scrollY;
+}
+
+function restoreScroll(scrollY) {
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
+  window.scrollTo(0, scrollY);
+}
+
+// 監聽 input focus/blur
+let scrollPos = 0;
+
+document.addEventListener('focusin', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    scrollPos = preventScrollOnKeyboardOpen();
+  }
 });
 
-// To element where I would like to avoid this behaviour
-document.body.addEventListener('touchmove', (e) => {
-    e.stopPropogation();
+document.addEventListener('focusout', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    restoreScroll(scrollPos);
+  }
+});
+// 在載入和 resize 時更新 vh 單位
+function setVh() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+window.addEventListener('resize', setVh);
+window.addEventListener('load', setVh);
+
+window.addEventListener('resize', () => {
+  const isKeyboardOpen = window.innerHeight < window.screen.height - 150;
+  document.body.classList.toggle('keyboard-open', isKeyboardOpen);
 });
 </script>
