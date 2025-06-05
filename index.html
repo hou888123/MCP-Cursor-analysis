@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>Vite + React</title>
     <script type="module" crossorigin src="./assets/index-CQo1yjN4.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-CS8f0UJf.css">
@@ -12,3 +12,23 @@
     <div id="root" class="relative"></div>
   </body>
 </html>
+<script>
+  const MAX_KEYBOARD_PROPORTION = .52
+const preventScrollWhenSoftKeyboardAppearsIfThereIsPlentyOfRoom = (e) => {
+  // Bail if not iOS
+  if (!/iPad|iPhone|iPod/.test(navigator.userAgent)) return
+  // Bail if there's too little vertical space and scrolling is necessary
+  if ((e.target.offsetTop + e.target.offsetHeight) / window.innerHeight > MAX_KEYBOARD_PROPORTION) return
+
+  // Fix the position of the body momentarily to prevent user agent scrolling
+  var offset = document.body.scrollTop;
+  document.body.style.top = (offset * -1) + 'px';
+  document.body.classList.add('prevent-ios-focus-scrolling');
+  setTimeout(() => {
+    // Undo it after 500ms, roughly the amount of time focus animation takes iOS
+    offset = parseInt(document.body.style.top, 10);
+    document.body.classList.remove('prevent-ios-focus-scrolling');
+    document.body.scrollTop = (offset * -1);
+  }, 500)
+}
+</script>
